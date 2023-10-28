@@ -8,7 +8,6 @@ services:
     environment:
       - TITLE="Teste de Velocidade"
       - MODE=standalone
-      - DOMAIN=www.exemplo.com.br
       - TELEMETRY=true
       - ENABLE_ID_OBFUSCATION=true
       - REDACT_IP_ADDRESSES=true
@@ -28,7 +27,6 @@ services:
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       - "traefik.http.routers.speedtest.middlewares=redirect-to-https@docker"
       # Get the routes from https
-      #- "traefik.http.routers.wordpressmysite-secured.rule=Host(`${DOMAINE}`)"
       - "traefik.http.routers.speedtest-secured.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.speedtest-secured.entrypoints=web-secure"
       # Apply autentificiation with http challenge
