@@ -1,0 +1,36 @@
+version: '2.21'
+
+services:
+  speedtest:
+    container_name: "speedtest"
+    image: adolfintel/speedtest
+    restart: always
+    environment:
+      - TITLE="Teste de Velocidade"
+      - MODE=standalone
+      - DOMAIN=www.exemplo.com.br
+      - TELEMETRY=true
+      - ENABLE_ID_OBFUSCATION=true
+      - REDACT_IP_ADDRESSES=true
+      # Stats page will be available at http://your.server/results/stats.php, but a password must be specified.
+      - PASSWORD="testpass"
+      - WEBPORT=80
+    ports:
+      - "80:80"
+    labels:
+      # The labels are usefull for Traefik only
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      # Get the routes from http
+      - "traefik.http.routers.speedtest.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.speedtest.entrypoints=web"
+      # Redirect these routes to https
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.speedtest.middlewares=redirect-to-https@docker"
+      # Get the routes from https
+      #- "traefik.http.routers.wordpressmysite-secured.rule=Host(`${DOMAINE}`)"
+      - "traefik.http.routers.speedtest-secured.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.speedtest-secured.entrypoints=web-secure"
+      # Apply autentificiation with http challenge
+      - "traefik.http.routers.sspeedtest-secured.tls=true"
+      - "traefik.http.routers.speedtest-secured.tls.certresolver=myhttpchallenge"
